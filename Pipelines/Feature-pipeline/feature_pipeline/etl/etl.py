@@ -46,13 +46,14 @@ def get_kraken_data(symbol_pair, interval=1440, start_time=None):
         for col in ["open", "high", "low", "close", "vwap", "volume"]:
             df[col] = df[col].astype(float)
 
-        datetime_format: str = "%Y-%m-%d %H:%M",
+        datetime_format: str = "%Y-%m-%d"
 
         metadata = {
             "symbol": symbol_pair,
             "interval": interval,
             "url": endpoint,
-            "datetime_start": start_time,
+            "datetime_start": df["timestamp"].min().strftime(datetime_format),
+            "datetime_end": df["timestamp"].max().strftime(datetime_format),
             "datetime_format": datetime_format,
         }
 
@@ -66,7 +67,6 @@ def process_crypto_data(df):
     """Process and engineer features from raw OHLCV data"""
 
     # Add technical indicators
-    df["returns"] = df["close"].pct_change()
     df["log_returns"] = np.log(df["close"]).diff()
 
     # Add moving averages
@@ -74,7 +74,7 @@ def process_crypto_data(df):
     df["ma21"] = df["close"].rolling(window=21).mean()
 
     # Add volatility measure
-    df["volatility"] = df["returns"].rolling(window=30).std()
+    df["volatility"] = df["close"].rolling(window=30).std()
 
     # Trading volume features :  trading interest
     df["volume_ma7"] = df["volume"].rolling(window=7).mean()

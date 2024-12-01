@@ -1,5 +1,5 @@
 import pandas as pd
-from hsfs.feature_group import FeatureGroup
+# from hsfs.feature_group import FeatureGroup
 import hopsworks
 from great_expectations.core import ExpectationSuite
 
@@ -9,8 +9,7 @@ from ..settings import SETTINGS
 def push_feature_groupe_to_fs(
     data: pd.DataFrame,
     validation_expectation_suite: ExpectationSuite,
-    feature_group_version: int,
-)-> FeatureGroup:
+    feature_group_version: int):
     """
     Push data to feature store.
     """
