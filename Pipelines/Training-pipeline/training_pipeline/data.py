@@ -9,7 +9,7 @@ from sktime.forecasting.model_selection import temporal_train_test_split
 from training_pipeline.settings import SETTINGS
 
 def prepare_data(
-    data: pd.DataFrame, target: str = "close", fh: int = 24
+    data: pd.DataFrame, target: str = "close", fh: int = 3
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     Structure the data for training:
@@ -29,15 +29,13 @@ def prepare_data(
     # Exogenous variables (if applicable)
     X = data[['volume', 'volume_ma7', 'log_returns', 'ma7']].values
 
-    print("Features ", X.shape)
-    print("Target ", y.shape)
     y_train, y_test, X_train, X_test = temporal_train_test_split(y, X, test_size=fh)
 
     return y_train, y_test, X_train, X_test
 
 
 def load_dataset_from_feature_store(
-    feature_view_version: int, training_dataset_version: int, fh: int = 24
+    feature_view_version: int, training_dataset_version: int, fh: int = 3
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Load features from feature store.
 
@@ -63,7 +61,6 @@ def load_dataset_from_feature_store(
         training_dataset_version=training_dataset_version
     )
 
-    print("data ", data)
     fv_metadata = feature_view.to_dict()
     fv_metadata["query"] = fv_metadata["query"].to_string()
     fv_metadata["features"] = [f.name for f in fv_metadata["features"]]
